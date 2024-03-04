@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logical Calculator Layout</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            display: inline-block;
+        }
+        .display {
+            width: 260px; /* Adjusted for the wider layout */
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f2f2f2;
+            text-align: right;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 60px); /* Adjusted for additional buttons and layout */
+            grid-auto-rows: 60px; /* Makes buttons taller */
+            gap: 10px;
+        }
+        button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <!-- Number buttons -->
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
+            <button onclick="setOperation('+')">+</button>
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
+            <button onclick="setOperation('-')">-</button>
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
+            <button onclick="setOperation('*')">*</button>
+            <button onclick="appendNumber(0)">0</button>
+            <button onclick="performOperation('sqrt')">√</button>
+            <button onclick="performOperation('square')">x²</button>
+            <button onclick="setOperation('/')">/</button>
+
+            <!-- Additional functions -->
+            <button onclick="performOperation('cubed')">x³</button>
+            <button onclick="performOperation('cubeRoot')">∛</button>
+            <button onclick="performOperation('factorial')">n!</button>
+            <button onclick="setOperation('**')">^</button>
+
+            <!-- Clear and calculate -->
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="calculateResult()">=</button>
+        </div>
+    </div>
+    <script>
+        let displayValue = '0';
+        const displayElement = document.getElementById('display');
+    
+        function appendNumber(number) {
+            if (displayValue === '0') {
+                displayValue = number.toString();
+            } else {
+                displayValue += number.toString();
+            }
+            updateDisplay();
+        }
+    
+        function setOperation(operator) {
+            if (canAddOperator()) {
+                displayValue += ' ' + operator + ' ';
+                updateDisplay();
+            }
+        }
+    
+        function canAddOperator() {
+            // Check if the last character is a digit, allowing for an operator to be added
+            return /[0-9]$/g.test(displayValue);
+        }
+    
+        function clearDisplay() {
+            displayValue = '0';
+            updateDisplay();
+        }
+    
+        function calculateResult() {
+            try {
+                displayValue = eval(displayValue).toString();
+            } catch (error) {
+                displayValue = 'Error';
+            }
+            updateDisplay();
+        }
+    
+        function performOperation(operation) {
+            if (operation === 'factorial') {
+                if (/[0-9]$/g.test(displayValue)) {
+                    displayValue = factorial(eval(displayValue)).toString();
+                    updateDisplay();
+                }
+            } else if (canAddOperator()) { 
+                switch(operation) {
+                    case 'sqrt':
+                        displayValue = Math.sqrt(eval(displayValue)).toString();
+                        break;
+                    case 'square':
+                        displayValue = Math.pow(eval(displayValue), 2).toString();
+                        break;
+                    case 'cubed':
+                        displayValue = Math.pow(eval(displayValue), 3).toString();
+                        break;
+                    case 'cubeRoot':
+                        displayValue = Math.cbrt(eval(displayValue)).toString();
+                        break;
+                    default:
+                        break;
+                }
+                updateDisplay();
+            }
+        }
+    
+        function factorial(n) {
+            if (n === 0 || n === 1) return 1;
+            for (let i = n - 1; i >= 1; i--) {
+                n *= i;
+            }
+            return n;
+        }
+    
+        function updateDisplay() {
+            displayElement.innerText = displayValue || '0';
+        }
+    </script>
+    
+</body>
+</html>
